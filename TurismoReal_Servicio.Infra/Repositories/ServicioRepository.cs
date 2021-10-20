@@ -97,7 +97,7 @@ namespace TurismoReal_Servicio.Infra.Repositories
         }
 
         // EDIT SERVICE
-        public async Task<object> UpdateServicio(int id, Servicio servicio)
+        public async Task<int> UpdateServicio(int id, Servicio servicio)
         {
             await Task.Delay(1);
             throw new NotImplementedException();

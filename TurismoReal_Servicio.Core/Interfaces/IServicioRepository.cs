@@ -16,7 +16,7 @@ namespace TurismoReal_Servicio.Core.Interfaces
         Task<int> CreateServicio(Servicio servicio);
 
         // EDIT SERVICE
-        Task<object> UpdateServicio(int id, Servicio servicio);
+        Task<int> UpdateServicio(int id, Servicio servicio);
 
         // DELETE SERVICE
         Task<object> DeleteServicio(int id);

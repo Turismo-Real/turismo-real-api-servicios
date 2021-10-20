@@ -49,6 +49,8 @@ namespace TurismoReal_Servicio.Api.Controllers
         [HttpPut]
         public async Task<object> UpdateServicio(int id, [FromBody] Servicio servicio)
         {
+            int updated = await _servicioRepository.UpdateServicio(id, servicio);
+
             await Task.Delay(1);
             throw new NotImplementedException();
         }
