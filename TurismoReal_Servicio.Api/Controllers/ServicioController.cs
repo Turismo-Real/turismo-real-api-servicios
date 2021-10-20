@@ -38,8 +38,11 @@ namespace TurismoReal_Servicio.Api.Controllers
         [HttpPost]
         public async Task<object> CreateServicio([FromBody] Servicio servicio)
         {
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            int saved = await _servicioRepository.CreateServicio(servicio);
+
+            if (saved == -1) return new { message = $"No existe el tipo de servicio [{servicio.tipo}].", saved = false };
+            if (saved == 0) return new { message = "Error al agregar servicio.", saved = false };
+            return new { message = $"Servicio agregado con id {saved}", saved = true };
         }
 
         // PUT /api/v1/servicio/{id}

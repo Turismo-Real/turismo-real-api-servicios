@@ -70,10 +70,30 @@ namespace TurismoReal_Servicio.Infra.Repositories
         }
 
         // ADD SERVICE
-        public async Task<object> CreateServicio(Servicio servicio)
+        public async Task<int> CreateServicio(Servicio servicio)
         {
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            _context.OpenConnection();
+            OracleCommand cmd = new OracleCommand("sp_agregar_servicio", _context.GetConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.BindByName = true;
+            cmd.Parameters.Add("nombre_s", OracleDbType.Varchar2).Direction = ParameterDirection.Input;
+            cmd.Parameters.Add("descripcion_s", OracleDbType.Varchar2).Direction = ParameterDirection.Input;
+            cmd.Parameters.Add("valor_s", OracleDbType.Double).Direction = ParameterDirection.Input;
+            cmd.Parameters.Add("tipo_s", OracleDbType.Varchar2).Direction = ParameterDirection.Input;
+            cmd.Parameters.Add("saved", OracleDbType.Int32).Direction = ParameterDirection.Output;
+
+            cmd.Parameters["nombre_s"].Value = servicio.nombre;
+            cmd.Parameters["descripcion_s"].Value = servicio.descripcion;
+            cmd.Parameters["valor_s"].Value = servicio.valor;
+            cmd.Parameters["tipo_s"].Value = servicio.tipo;
+
+            await cmd.ExecuteNonQueryAsync();
+            // Retorna el id del servicio agregado
+            int saved = int.Parse(cmd.Parameters["saved"].Value.ToString());
+
+            _context.CloseConnection();
+            return saved;
         }
 
         // EDIT SERVICE
