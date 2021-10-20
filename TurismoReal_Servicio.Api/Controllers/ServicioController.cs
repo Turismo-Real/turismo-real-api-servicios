@@ -7,7 +7,7 @@ using TurismoReal_Servicio.Core.Interfaces;
 
 namespace TurismoReal_Servicio.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class ServicioController : ControllerBase
     {
@@ -20,10 +20,10 @@ namespace TurismoReal_Servicio.Api.Controllers
 
         // GET /api/v1/servicio
         [HttpGet]
-        public async Task<List<object>> GetServicios()
+        public async Task<List<Servicio>> GetServicios()
         {
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            List<Servicio> servicios = await _servicioRepository.GetServicios();
+            return servicios;
         }
 
         // GET /api/v1/servicio/{id}
@@ -44,7 +44,7 @@ namespace TurismoReal_Servicio.Api.Controllers
 
         // PUT /api/v1/servicio/{id}
         [HttpPut]
-        public async Task<object> UpdateServicio(int id)
+        public async Task<object> UpdateServicio(int id, [FromBody] Servicio servicio)
         {
             await Task.Delay(1);
             throw new NotImplementedException();

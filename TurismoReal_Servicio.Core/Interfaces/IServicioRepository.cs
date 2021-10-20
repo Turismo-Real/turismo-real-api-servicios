@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using TurismoReal_Servicio.Core.Entities;
 
@@ -9,7 +7,7 @@ namespace TurismoReal_Servicio.Core.Interfaces
     public interface IServicioRepository
     {
         // GET ALL SERVICES
-        Task<List<object>> GetServicios();
+        Task<List<Servicio>> GetServicios();
 
         // GET SERVICE BY ID
         Task<object> GetServicio(int id);
