@@ -58,11 +58,14 @@ namespace TurismoReal_Servicio.Api.Controllers
         }
 
         // DELETE /api/v1/servicio/{id}
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<object> DeleteServicio(int id)
         {
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            int removed = await _servicioRepository.DeleteServicio(id);
+
+            if (removed == -1) return new { message = $"No existe el servicio con id {id}.", removed = false };
+            if (removed == 0) return new { message = "Error al eliminar servicio.", removed = false };
+            return new { message = "Servicio eliminado.", removed = true };
         }
 
     }

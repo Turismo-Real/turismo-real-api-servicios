@@ -125,10 +125,20 @@ namespace TurismoReal_Servicio.Infra.Repositories
         }
 
         // DELETE SERVICE
-        public async Task<object> DeleteServicio(int id)
+        public async Task<int> DeleteServicio(int id)
         {
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            _context.OpenConnection();
+            OracleCommand cmd = new OracleCommand("sp_eliminar_servicio", _context.GetConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.BindByName = true;
+
+            cmd.Parameters.Add("servicio_id", OracleDbType.Int32).Direction = ParameterDirection.Input;
+            cmd.Parameters.Add("removed", OracleDbType.Int32).Direction = ParameterDirection.Output;
+
+            cmd.Parameters["servicio_id"].Value = id;
+            await cmd.ExecuteNonQueryAsync();
+            int removed = Convert.ToInt32(cmd.Parameters["removed"].Value.ToString());
+            return removed;
         }
     }
 }
