@@ -99,8 +99,29 @@ namespace TurismoReal_Servicio.Infra.Repositories
         // EDIT SERVICE
         public async Task<int> UpdateServicio(int id, Servicio servicio)
         {
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            _context.OpenConnection();
+            OracleCommand cmd = new OracleCommand("sp_editar_servicio", _context.GetConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.BindByName = true;
+            cmd.Parameters.Add("servicio_id", OracleDbType.Int32).Direction = ParameterDirection.Input;
+            cmd.Parameters.Add("nombre_s", OracleDbType.Varchar2).Direction = ParameterDirection.Input;
+            cmd.Parameters.Add("descripcion_s", OracleDbType.Varchar2).Direction = ParameterDirection.Input;
+            cmd.Parameters.Add("valor_s", OracleDbType.Double).Direction = ParameterDirection.Input;
+            cmd.Parameters.Add("tipo_s", OracleDbType.Varchar2).Direction = ParameterDirection.Input;
+            cmd.Parameters.Add("updated", OracleDbType.Int32).Direction = ParameterDirection.Output;
+
+            cmd.Parameters["servicio_id"].Value = id;
+            cmd.Parameters["nombre_s"].Value = servicio.nombre;
+            cmd.Parameters["descripcion_s"].Value = servicio.descripcion;
+            cmd.Parameters["valor_s"].Value = servicio.valor;
+            cmd.Parameters["tipo_s"].Value = servicio.tipo;
+
+            await cmd.ExecuteNonQueryAsync();
+            int updated = int.Parse(cmd.Parameters["updated"].Value.ToString());
+
+            _context.CloseConnection();
+            return updated;
         }
 
         // DELETE SERVICE

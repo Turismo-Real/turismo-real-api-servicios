@@ -46,13 +46,15 @@ namespace TurismoReal_Servicio.Api.Controllers
         }
 
         // PUT /api/v1/servicio/{id}
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<object> UpdateServicio(int id, [FromBody] Servicio servicio)
         {
             int updated = await _servicioRepository.UpdateServicio(id, servicio);
 
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            if (updated == -1) return new { message = $"No existe el servicio con id {id}.", updated = false };
+            if (updated == -2) return new { message = $"No existe el tipo de servicio [{servicio.tipo}].", updated = false };
+            if (updated == 0) return new { message = "Error al actualizar servicio.", updated = false };
+            return new { message = "Servicio modificado correctamente.", updated = true };
         }
 
         // DELETE /api/v1/servicio/{id}
