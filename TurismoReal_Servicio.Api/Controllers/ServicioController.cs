@@ -28,10 +28,10 @@ namespace TurismoReal_Servicio.Api.Controllers
 
         // GET /api/v1/servicio/{id}
         [HttpGet("{id}")]
-        public async Task<object> GetServicio(int id)
+        public async Task<Servicio> GetServicio(int id)
         {
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            Servicio servicio = await _servicioRepository.GetServicio(id);
+            return servicio;
         }
 
         // POST /api/v1/servicio

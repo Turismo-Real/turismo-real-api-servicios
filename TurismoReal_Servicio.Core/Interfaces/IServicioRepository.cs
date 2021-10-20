@@ -10,7 +10,7 @@ namespace TurismoReal_Servicio.Core.Interfaces
         Task<List<Servicio>> GetServicios();
 
         // GET SERVICE BY ID
-        Task<object> GetServicio(int id);
+        Task<Servicio> GetServicio(int id);
 
         // ADD SERVICE
         Task<object> CreateServicio(Servicio servicio);
