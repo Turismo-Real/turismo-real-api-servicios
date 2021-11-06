@@ -140,21 +140,119 @@ namespace TurismoReal_Servicio.Api.Controllers
 
             int updated = await _servicioRepository.UpdateServicio(id, servicio);
 
-            if (updated == -1) return new { message = $"No existe el servicio con id {id}.", updated = false };
-            if (updated == -2) return new { message = $"No existe el tipo de servicio [{servicio.tipo}].", updated = false };
-            if (updated == 0) return new { message = "Error al actualizar servicio.", updated = false };
-            return new { message = "Servicio modificado correctamente.", updated = true };
+            string message;
+            if (updated == -1)
+            {
+                message = $"No existe el servicio con id {id}.";
+                var responseNotFound = new { message = message, updated = false };
+                // LOG
+                log.inicioSolicitud = startService;
+                log.finSolicitud = DateTime.Now;
+                log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+                log.statusCode = 200;
+                log.response = responseNotFound;
+                Console.WriteLine(log.parseJson());
+                // LOG
+                return responseNotFound;
+            }
+
+            if (updated == -2)
+            {
+                message = $"No existe el tipo de servicio [{servicio.tipo}].";
+                var responseServiceTypeNotFound = new { message = message, updated = false };
+                // LOG
+                log.inicioSolicitud = startService;
+                log.finSolicitud = DateTime.Now;
+                log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+                log.statusCode = 200;
+                log.response = responseServiceTypeNotFound;
+                Console.WriteLine(log.parseJson());
+                // LOG
+                return responseServiceTypeNotFound;
+            }
+
+            if (updated == 0)
+            {
+                message = "Error al actualizar servicio.";
+                var responseError = new { message = message, updated = false };
+                // LOG
+                log.inicioSolicitud = startService;
+                log.finSolicitud = DateTime.Now;
+                log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+                log.statusCode = 200;
+                log.response = responseError;
+                Console.WriteLine(log.parseJson());
+                // LOG
+                return responseError;
+            }
+
+            Servicio updatedService = await _servicioRepository.GetServicio(id);
+            message = "Servicio modificado correctamente.";
+            var responseOK = new { message = message, updated = true, servicio = updatedService };
+            // LOG
+            log.inicioSolicitud = startService;
+            log.finSolicitud = DateTime.Now;
+            log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+            log.statusCode = 200;
+            log.response = responseOK;
+            Console.WriteLine(log.parseJson());
+            // LOG
+            return responseOK;
         }
 
         // DELETE /api/v1/servicio/{id}
         [HttpDelete("{id}")]
         public async Task<object> DeleteServicio(int id)
         {
+            LogModel log = new LogModel();
+            log.servicio = serviceName;
+            log.method = "DELETE";
+            log.endpoint = "/api/v1/usuario/{id}";
+            DateTime startService = DateTime.Now;
+
             int removed = await _servicioRepository.DeleteServicio(id);
 
-            if (removed == -1) return new { message = $"No existe el servicio con id {id}.", removed = false };
-            if (removed == 0) return new { message = "Error al eliminar servicio.", removed = false };
-            return new { message = "Servicio eliminado.", removed = true };
+            string message;
+            if (removed == -1)
+            {
+                message = $"No existe el servicio con id {id}.";
+                var responseNotFound = new { message, removed = false };
+                // LOG
+                log.inicioSolicitud = startService;
+                log.finSolicitud = DateTime.Now;
+                log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+                log.statusCode = 200;
+                log.response = responseNotFound;
+                Console.WriteLine(log.parseJson());
+                // LOG
+                return responseNotFound;
+            }
+
+            if (removed == 0)
+            {
+                message = "Error al eliminar servicio.";
+                var responseError = new { message, removed = false };
+                // LOG
+                log.inicioSolicitud = startService;
+                log.finSolicitud = DateTime.Now;
+                log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+                log.statusCode = 200;
+                log.response = responseError;
+                Console.WriteLine(log.parseJson());
+                // LOG
+                return responseError;
+            }
+            message = "Servicio eliminado.";
+            var responseOK = new { message, removed = true };
+            // LOG
+            log.inicioSolicitud = startService;
+            log.finSolicitud = DateTime.Now;
+            log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+            log.statusCode = 200;
+            log.response = responseOK;
+            Console.WriteLine(log.parseJson());
+            // LOG
+            return responseOK;
         }
 
     }
