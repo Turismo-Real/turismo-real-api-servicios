@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TurismoReal_Servicio.Core.Entities;
 using TurismoReal_Servicio.Core.Interfaces;
+using TurismoReal_Servicio.Core.Log;
 
 namespace TurismoReal_Servicio.Api.Controllers
 {
@@ -12,6 +13,7 @@ namespace TurismoReal_Servicio.Api.Controllers
     public class ServicioController : ControllerBase
     {
         private readonly IServicioRepository _servicioRepository;
+        private readonly string serviceName = "turismo_real_servicios";
 
         public ServicioController(IServicioRepository servicioRepository)
         {
@@ -22,15 +24,45 @@ namespace TurismoReal_Servicio.Api.Controllers
         [HttpGet]
         public async Task<List<Servicio>> GetServicios()
         {
+            LogModel log = new LogModel();
+            log.servicio = serviceName;
+            log.method = "get";
+            log.endpoint = "/api/v1/servicio";
+            DateTime startService = DateTime.Now;
+
             List<Servicio> servicios = await _servicioRepository.GetServicios();
+
+            // LOG
+            log.inicioSolicitud = startService;
+            log.finSolicitud = DateTime.Now;
+            log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+            log.statusCode = 200;
+            log.response = "Lista de servicios";
+            Console.WriteLine(log.parseJson());
+            // LOG
             return servicios;
         }
 
         // GET /api/v1/servicio/{id}
         [HttpGet("{id}")]
-        public async Task<Servicio> GetServicio(int id)
+        public async Task<object> GetServicio(int id)
         {
+            LogModel log = new LogModel();
+            log.servicio = serviceName;
+            log.method = "GET";
+            log.endpoint = "/api/v1/servicio/{id}";
+            DateTime startService = DateTime.Now;
+
             Servicio servicio = await _servicioRepository.GetServicio(id);
+
+            // LOG
+            log.inicioSolicitud = startService;
+            log.finSolicitud = DateTime.Now;
+            log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+            log.statusCode = 200;
+            log.response = servicio;
+            Console.WriteLine(log.parseJson());
+            // LOG
             return servicio;
         }
 
@@ -38,17 +70,74 @@ namespace TurismoReal_Servicio.Api.Controllers
         [HttpPost]
         public async Task<object> CreateServicio([FromBody] Servicio servicio)
         {
+            LogModel log = new LogModel();
+            log.servicio = serviceName;
+            log.method = "POST";
+            log.endpoint = "/api/v1/usuario";
+            log.payload = servicio;
+            DateTime startService = DateTime.Now;
+
             int saved = await _servicioRepository.CreateServicio(servicio);
 
-            if (saved == -1) return new { message = $"No existe el tipo de servicio [{servicio.tipo}].", saved = false };
-            if (saved == 0) return new { message = "Error al agregar servicio.", saved = false };
-            return new { message = $"Servicio agregado con id {saved}", saved = true };
+            string message;
+            if (saved == -1)
+            {
+                message = $"No existe el tipo de servicio [{servicio.tipo}].";
+                var responseNotFound = new { message = message, saved = false };
+
+                // LOG
+                log.inicioSolicitud = startService;
+                log.finSolicitud = DateTime.Now;
+                log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+                log.statusCode = 200;
+                log.response = responseNotFound;
+                Console.WriteLine(log.parseJson());
+                // LOG
+                return responseNotFound;
+            }
+
+            if (saved == 0)
+            {
+                message = "Error al agregar servicio.";
+                var responseError = new { message = message, saved = false };
+
+                // LOG
+                log.inicioSolicitud = startService;
+                log.finSolicitud = DateTime.Now;
+                log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+                log.statusCode = 200;
+                log.response = responseError;
+                Console.WriteLine(log.parseJson());
+                // LOG
+                return responseError;
+            }
+
+            message = "Servicio agregado.";
+            Servicio servicioCreado = await _servicioRepository.GetServicio(saved);
+            var responseOK = new { message = message, saved = true, servicio = servicioCreado };
+
+            // LOG
+            log.inicioSolicitud = startService;
+            log.finSolicitud = DateTime.Now;
+            log.tiempoSolicitud = (log.finSolicitud - log.inicioSolicitud).TotalMilliseconds + " ms";
+            log.statusCode = 200;
+            log.response = responseOK;
+            Console.WriteLine(log.parseJson());
+            // LOG
+            return responseOK;
         }
 
         // PUT /api/v1/servicio/{id}
         [HttpPut("{id}")]
         public async Task<object> UpdateServicio(int id, [FromBody] Servicio servicio)
         {
+            LogModel log = new LogModel();
+            log.servicio = serviceName;
+            log.method = "PUT";
+            log.endpoint = "/api/v1/usuario/{id}";
+            log.payload = servicio;
+            DateTime startService = DateTime.Now;
+
             int updated = await _servicioRepository.UpdateServicio(id, servicio);
 
             if (updated == -1) return new { message = $"No existe el servicio con id {id}.", updated = false };
