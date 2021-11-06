@@ -26,7 +26,7 @@ namespace TurismoReal_Servicio.Api.Controllers
         {
             LogModel log = new LogModel();
             log.servicio = serviceName;
-            log.method = "get";
+            log.method = "GET";
             log.endpoint = "/api/v1/servicio";
             DateTime startService = DateTime.Now;
 
